@@ -1,7 +1,5 @@
 from django.db import models
 
-from django.db import models
-
 
 class SemanaCardapio(models.Model):
     id_semana = models.AutoField(primary_key=True)
@@ -17,14 +15,19 @@ class SemanaCardapio(models.Model):
 
 class DiaCardapio(models.Model):
     id_dia = models.AutoField(primary_key=True)
+
     id_semana = models.ForeignKey(
         SemanaCardapio,
         on_delete=models.CASCADE,
         db_column='id_semana',
         related_name='dias'
     )
+
     data_dia = models.DateTimeField()
-    nome_dia = models.CharField(max_length=20)
+
+    nome_dia = models.CharField(
+        max_length=20
+    )
 
     class Meta:
         db_table = 'dia_cardapio'
@@ -35,7 +38,10 @@ class DiaCardapio(models.Model):
 
 class Refeicao(models.Model):
     id_refeicao = models.AutoField(primary_key=True)
-    nome_refeicao = models.CharField(max_length=100)
+
+    nome_refeicao = models.CharField(
+        max_length=50
+    )
 
     class Meta:
         db_table = 'refeicao'
@@ -46,7 +52,10 @@ class Refeicao(models.Model):
 
 class CategoriaItem(models.Model):
     id_categoria = models.AutoField(primary_key=True)
-    nome_categoria = models.CharField(max_length=100)
+
+    nome_categoria = models.CharField(
+        max_length=50
+    )
 
     class Meta:
         db_table = 'categoria_item'
@@ -57,8 +66,14 @@ class CategoriaItem(models.Model):
 
 class ItemCardapio(models.Model):
     id_item = models.AutoField(primary_key=True)
-    nome_item = models.CharField(max_length=150)
-    descricao = models.TextField(blank=True, null=True)
+
+    nome_item = models.CharField(
+        max_length=50
+    )
+
+    descricao = models.CharField(
+        max_length=255
+    )
 
     class Meta:
         db_table = 'item_cardapio'
