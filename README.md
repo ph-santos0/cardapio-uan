@@ -197,7 +197,7 @@ O sistema permitirá:
 * [x] Projeto Django configurado
 * [x] App principal criado
 * [x] GitHub configurado
-* [ ] Models
+* [x] Models
 * [ ] Login
 * [ ] CRUD
 * [ ] Templates
