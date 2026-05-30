@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Cardápio</title>
+</head>
+<body>
+
+    <h1>Sistema de Cardápio UAN</h1>
+
+    <h2>Como deseja entrar?</h2>
+
+    <a href="{% url 'usuario_comum' %}">
+        <button>Sou usuário comum</button>
+    </a>
+
+    <br><br>
+
+    <a href="{% url 'login_nutricionista' %}">
+        <button>Sou nutricionista</button>
+    </a>
+
+</body>
+</html>

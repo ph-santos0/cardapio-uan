@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Nutricionista</title>
+</head>
+<body>
+
+    <h1>Painel do Nutricionista</h1>
+
+    <p>Bem-vindo, {{ request.user.username }}.</p>
+
+    <p>Aqui o nutricionista poderá cadastrar, editar e remover cardápios.</p>
+
+    <a href="{% url 'sair' %}">Sair</a>
+
+</body>
+</html>
