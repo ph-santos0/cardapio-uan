@@ -198,7 +198,7 @@ O sistema permitirá:
 * [x] App principal criado
 * [x] GitHub configurado
 * [x] Models
-* [ ] Login
+* [x] Login
 * [ ] CRUD
 * [ ] Templates
 * [ ] Interface final
