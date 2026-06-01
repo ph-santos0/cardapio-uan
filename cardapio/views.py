@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
+from models
 
 def escolha_perfil(request):
     return render(request, "cardapio/escolha_perfil.html")
@@ -37,3 +38,11 @@ def dashboard_nutricionista(request):
 def sair(request):
     logout(request)
     return redirect("escolha_perfil")
+
+
+#crud
+@api_view(['GET'])
+def listar_cardapios(request):
+    cardapios = Cardapio.objects.all()
+    serializer = CardapioSerializer(cardapios, many=True)
+    return Response(serializer.data)
