@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'cardapio',
+    'rest_framework',
+    'HTTPresponse',
 ]
 
 MIDDLEWARE = [

@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from rest_framework.decorators import api_view
 
-from models
+
 
 def escolha_perfil(request):
     return render(request, "cardapio/escolha_perfil.html")
