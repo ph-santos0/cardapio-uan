@@ -3,7 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view
 
-
+from serializers import CardapioSerializer
+from models import Cardapio
+from rest_framework.response import Response
 
 def escolha_perfil(request):
     return render(request, "cardapio/escolha_perfil.html")
@@ -42,8 +44,15 @@ def sair(request):
 
 
 #crud
-@api_view(['GET'])
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def listar_cardapios(request):
-    cardapios = Cardapio.objects.all()
-    serializer = CardapioSerializer(cardapios, many=True)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        cardapios = Cardapio.objects.all()
+        serializer = CardapioSerializer(cardapios, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'POST':
+        novo_cardapio = CardapioSerializer(data=request.data)
+        if novo_cardapio.isvalid():
+            novo_cardapio.save()
+            return Response(novo_cardapio.data, status=status.HTTP_201_CREATED)

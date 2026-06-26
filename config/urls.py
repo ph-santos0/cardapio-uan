@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from .api import api
 
 from cardapio.views import (
@@ -12,7 +12,7 @@ from cardapio.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", api.urls),
+    path("api/", include(api.urls), name="api"),
 
     path("", escolha_perfil, name="escolha_perfil"),
     path("usuario/", usuario_comum, name="usuario_comum"),
