@@ -1,13 +1,48 @@
 {% extends "cardapio/base.html" %}
 
 {% block title %}
-Início
+Início | Cardápio UAN
 {% endblock %}
 
 {% block content %}
 
-<h2>Bem-vindo ao sistema de cardápio</h2>
+<section>
+    <div class="apresentacao">
+        <h2>Bem-vindo ao sistema de cardápio</h2>
 
-<p>Escolha como deseja acessar o sistema.</p>
+        <p>
+            Consulte o cardápio semanal da Unidade de Alimentação e Nutrição
+            ou acesse a área reservada aos nutricionistas.
+        </p>
+    </div>
+
+    <div class="opcoes-acesso">
+        <div class="cartao-acesso">
+            <h3>Cardápio da semana</h3>
+
+            <p>
+                Consulte as refeições e os alimentos oferecidos em cada dia
+                da semana.
+            </p>
+
+            <a class="botao" href="{% url 'usuario_comum' %}">
+                Visualizar cardápio
+            </a>
+        </div>
+
+        <div class="cartao-acesso">
+            <h3>Área do nutricionista</h3>
+
+            <p>
+                Acesse o painel para cadastrar, editar e excluir cardápios,
+                refeições e itens.
+            </p>
+
+            <a class="botao" href="{% url 'login_nutricionista' %}">
+                Entrar no sistema
+            </a>
+        </div>
+    </div>
+</section>
 
 {% endblock %}

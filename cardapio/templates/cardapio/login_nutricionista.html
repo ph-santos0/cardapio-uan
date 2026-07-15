@@ -6,13 +6,13 @@ Login do Nutricionista
 
 {% block content %}
 
-<div class="login-container">
-
+<section class="login-area">
     <div class="login-card">
+        <h2>Acesso do nutricionista</h2>
 
-        <h2>Acesso do Nutricionista</h2>
-
-        <p>Entre com seu usuário e senha para acessar o painel.</p>
+        <p>
+            Informe seu usuário e sua senha para entrar no painel.
+        </p>
 
         {% if erro %}
             <div class="mensagem-erro">
@@ -21,39 +21,37 @@ Login do Nutricionista
         {% endif %}
 
         <form method="post">
-
             {% csrf_token %}
 
-            <div class="campo-formulario">
+            <div class="campo">
                 <label for="username">Usuário</label>
 
                 <input
                     type="text"
                     id="username"
                     name="username"
+                    autocomplete="username"
                     required
                 >
             </div>
 
-            <div class="campo-formulario">
+            <div class="campo">
                 <label for="password">Senha</label>
 
                 <input
                     type="password"
                     id="password"
                     name="password"
+                    autocomplete="current-password"
                     required
                 >
             </div>
 
-            <button type="submit" class="botao-login">
+            <button class="botao-login" type="submit">
                 Entrar
             </button>
-
         </form>
-
     </div>
-
-</div>
+</section>
 
 {% endblock %}
