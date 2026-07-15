@@ -5,8 +5,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from .serializers import CardapioSerializer
-from .models import Cardapio
+from .serializers import CardapioSerializer, DiaCardapioSerializer, SemanaCardapioSerializer, RefeicaoSerializer, CategoriaItemSerializer, ItemCardapioSerializer
+from .models import Cardapio, DiaCardapio, SemanaCardapio, Refeicao, CategoriaItem, ItemCardapio
 
 
 def escolha_perfil(request):
@@ -52,9 +52,82 @@ def listar_cardapios(request):
         cardapios = Cardapio.objects.all()
         serializer = CardapioSerializer(cardapios, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    
     if request.method == 'POST':
-        novo_cardapio = CardapioSerializer(data=request.data)
-        if novo_cardapio.isvalid():
-            novo_cardapio.save()
-            return Response(novo_cardapio.data, status=status.HTTP_201_CREATED)
+        serializer = CardapioSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def dias_cardapio(request):
+    if request.method == 'GET':
+        dias_cardapio = DiaCardapio.objects.all()
+        serializer = DiaCardapioSerializer(dias_cardapio, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        serializer = DiaCardapioSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def semanas_cardapio(request):
+    if request.method == 'GET':
+        semanas_cardapio = SemanaCardapio.objects.all()
+        serializer = SemanaCardapioSerializer(semanas_cardapio, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        serializer = SemanaCardapioSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def refeicoes(request):
+    if request.method == 'GET':
+        refeicoes = Refeicao.objects.all()
+        serializer = RefeicaoSerializer(refeicoes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        serializer = RefeicaoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def categorias_item(request):
+    if request.method == 'GET':
+        categorias_item = CategoriaItem.objects.all()
+        serializer = CategoriaItemSerializer(categorias_item, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        serializer = CategoriaItemSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def itens_cardapio(request):
+    if request.method == 'GET':
+        itens_cardapio = ItemCardapio.objects.all()
+        serializer = ItemCardapioSerializer(itens_cardapio, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        serializer = ItemCardapioSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
