@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view
-
-from serializers import CardapioSerializer
-from models import Cardapio
 from rest_framework.response import Response
+from rest_framework import status
+
+from .serializers import CardapioSerializer
+from .models import Cardapio
+
 
 def escolha_perfil(request):
     return render(request, "cardapio/escolha_perfil.html")

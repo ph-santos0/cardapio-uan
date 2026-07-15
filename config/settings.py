@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cardapio',
     'rest_framework',
-    'HTTPresponse',
 ]
 
 MIDDLEWARE = [
