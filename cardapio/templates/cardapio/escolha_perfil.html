@@ -1,24 +1,13 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Sistema de Cardápio</title>
-</head>
-<body>
+{% extends "cardapio/base.html" %}
 
-    <h1>Sistema de Cardápio UAN</h1>
+{% block title %}
+Início
+{% endblock %}
 
-    <h2>Como deseja entrar?</h2>
+{% block content %}
 
-    <a href="{% url 'usuario_comum' %}">
-        <button>Sou usuário comum</button>
-    </a>
+<h2>Bem-vindo ao sistema de cardápio</h2>
 
-    <br><br>
+<p>Escolha como deseja acessar o sistema.</p>
 
-    <a href="{% url 'login_nutricionista' %}">
-        <button>Sou nutricionista</button>
-    </a>
-
-</body>
-</html>
+{% endblock %}

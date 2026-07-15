@@ -1,32 +1,59 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Login Nutricionista</title>
-</head>
-<body>
+{% extends "cardapio/base.html" %}
 
-    <h1>Login do Nutricionista</h1>
+{% block title %}
+Login do Nutricionista
+{% endblock %}
 
-    {% if erro %}
-        <p style="color: red;">{{ erro }}</p>
-    {% endif %}
+{% block content %}
 
-    <form method="post">
-        {% csrf_token %}
+<div class="login-container">
 
-        <label>Usuário:</label><br>
-        <input type="text" name="username" required><br><br>
+    <div class="login-card">
 
-        <label>Senha:</label><br>
-        <input type="password" name="password" required><br><br>
+        <h2>Acesso do Nutricionista</h2>
 
-        <button type="submit">Entrar</button>
-    </form>
+        <p>Entre com seu usuário e senha para acessar o painel.</p>
 
-    <br>
+        {% if erro %}
+            <div class="mensagem-erro">
+                {{ erro }}
+            </div>
+        {% endif %}
 
-    <a href="{% url 'escolha_perfil' %}">Voltar</a>
+        <form method="post">
 
-</body>
-</html>
+            {% csrf_token %}
+
+            <div class="campo-formulario">
+                <label for="username">Usuário</label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    required
+                >
+            </div>
+
+            <div class="campo-formulario">
+                <label for="password">Senha</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="botao-login">
+                Entrar
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

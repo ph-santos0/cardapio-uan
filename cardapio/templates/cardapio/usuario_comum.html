@@ -1,16 +1,143 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Usuário</title>
-</head>
-<body>
+{% extends "cardapio/base.html" %}
 
-    <h1>Área do Usuário Comum</h1>
+{% block title %}
+Cardápio da Semana
+{% endblock %}
 
-    <p>Aqui o usuário poderá visualizar o cardápio.</p>
+{% block content %}
 
-    <a href="{% url 'escolha_perfil' %}">Voltar</a>
+<section class="pagina-cardapio">
 
-</body>
-</html>
+    <div class="titulo-pagina">
+
+        <span class="categoria-pagina">
+            Unidade de Alimentação e Nutrição
+        </span>
+
+        <h2>Cardápio da Semana</h2>
+
+        <p>
+            Consulte abaixo as refeições cadastradas no sistema.
+        </p>
+
+    </div>
+
+    {% if semana %}
+
+        <div class="periodo-cardapio">
+
+            <div>
+                <strong>Período do cardápio</strong>
+
+                <span>
+                    {{ semana.data_inicio|date:"d/m/Y" }}
+                    a
+                    {{ semana.data_fim|date:"d/m/Y" }}
+                </span>
+            </div>
+
+            <span class="aviso-cardapio">
+                Cardápio sujeito a alterações
+            </span>
+
+        </div>
+
+    {% endif %}
+
+    {% if dias %}
+
+        <div class="dias-cardapio">
+
+            {% for dia in dias %}
+
+                <article class="dia-cardapio">
+
+                    <header class="cabecalho-dia">
+
+                        <h3>
+                            {{ dia.nome }}
+                        </h3>
+
+                        <span>
+                            {{ dia.data|date:"d/m" }}
+                        </span>
+
+                    </header>
+
+                    <div class="refeicoes-dia">
+
+                        {% for refeicao in dia.refeicoes %}
+
+                            <section class="refeicao">
+
+                                <h4>
+                                    {{ refeicao.nome }}
+                                </h4>
+
+                                {% if refeicao.itens %}
+
+                                    <ul>
+
+                                        {% for item in refeicao.itens %}
+
+                                            <li>
+
+                                                <strong>
+                                                    {{ item.nome }}
+                                                </strong>
+
+                                                {% if item.categoria %}
+                                                    <span class="categoria-item">
+                                                        {{ item.categoria }}
+                                                    </span>
+                                                {% endif %}
+
+                                                {% if item.descricao %}
+                                                    <p>
+                                                        {{ item.descricao }}
+                                                    </p>
+                                                {% endif %}
+
+                                            </li>
+
+                                        {% endfor %}
+
+                                    </ul>
+
+                                {% else %}
+
+                                    <p class="sem-itens">
+                                        Nenhum item cadastrado para esta refeição.
+                                    </p>
+
+                                {% endif %}
+
+                            </section>
+
+                        {% endfor %}
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="estado-vazio">
+
+            <h3>Nenhum cardápio cadastrado</h3>
+
+            <p>
+                Ainda não existem refeições cadastradas no banco de dados.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

@@ -1,18 +1,349 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Painel Nutricionista</title>
-</head>
-<body>
+{% extends "cardapio/base.html" %}
 
-    <h1>Painel do Nutricionista</h1>
+{% block title %}
+Painel do Nutricionista
+{% endblock %}
 
-    <p>Bem-vindo, {{ request.user.username }}.</p>
+{% block content %}
 
-    <p>Aqui o nutricionista poderá cadastrar, editar e remover cardápios.</p>
+<section class="dashboard">
 
-    <a href="{% url 'sair' %}">Sair</a>
+    <div class="dashboard-cabecalho">
 
-</body>
-</html>
+        <div>
+            <span class="categoria-pagina">
+                Área administrativa
+            </span>
+
+            <h2>Painel do Nutricionista</h2>
+
+            <p>
+                Bem-vindo,
+                <strong>{{ request.user.username }}</strong>.
+                Gerencie os dados usados no cardápio semanal.
+            </p>
+        </div>
+
+        <div class="dashboard-acoes-topo">
+
+            <a class="botao botao-secundario"
+               href="{% url 'usuario_comum' %}">
+                Ver página pública
+            </a>
+
+            <a class="botao botao-sair"
+               href="{% url 'sair' %}">
+                Sair
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="resumo-dashboard">
+
+        <article class="cartao-resumo">
+            <span>Cardápios cadastrados</span>
+            <strong>{{ total_cardapios }}</strong>
+        </article>
+
+        <article class="cartao-resumo">
+            <span>Semanas cadastradas</span>
+            <strong>{{ total_semanas }}</strong>
+        </article>
+
+        <article class="cartao-resumo">
+            <span>Dias cadastrados</span>
+            <strong>{{ total_dias }}</strong>
+        </article>
+
+        <article class="cartao-resumo">
+            <span>Itens cadastrados</span>
+            <strong>{{ total_itens }}</strong>
+        </article>
+
+    </div>
+
+    <div class="titulo-secao">
+
+        <h3>Gerenciamento do sistema</h3>
+
+        <p>
+            Escolha o módulo que deseja cadastrar, visualizar,
+            editar ou excluir.
+        </p>
+
+    </div>
+
+    <div class="modulos-dashboard">
+
+        <article class="modulo-dashboard">
+
+            <div class="icone-modulo">
+                CA
+            </div>
+
+            <div class="conteudo-modulo">
+                <h3>Cardápios</h3>
+
+                <p>
+                    Monte o cardápio relacionando o dia, a refeição,
+                    a categoria e o item.
+                </p>
+            </div>
+
+            <div class="acoes-modulo">
+
+                <a class="link-gerenciar"
+                   href="{% url 'admin:cardapio_cardapio_changelist' %}">
+                    Listar cardápios
+                </a>
+
+                <a class="link-adicionar"
+                   href="{% url 'admin:cardapio_cardapio_add' %}">
+                    Novo cardápio
+                </a>
+
+            </div>
+
+        </article>
+
+        <article class="modulo-dashboard">
+
+            <div class="icone-modulo">
+                SE
+            </div>
+
+            <div class="conteudo-modulo">
+                <h3>Semanas</h3>
+
+                <p>
+                    Cadastre a data inicial e a data final de cada
+                    semana de cardápio.
+                </p>
+            </div>
+
+            <div class="acoes-modulo">
+
+                <a class="link-gerenciar"
+                   href="{% url 'admin:cardapio_semanacardapio_changelist' %}">
+                    Listar semanas
+                </a>
+
+                <a class="link-adicionar"
+                   href="{% url 'admin:cardapio_semanacardapio_add' %}">
+                    Nova semana
+                </a>
+
+            </div>
+
+        </article>
+
+        <article class="modulo-dashboard">
+
+            <div class="icone-modulo">
+                DI
+            </div>
+
+            <div class="conteudo-modulo">
+                <h3>Dias</h3>
+
+                <p>
+                    Cadastre os dias e associe cada um deles a uma
+                    semana.
+                </p>
+            </div>
+
+            <div class="acoes-modulo">
+
+                <a class="link-gerenciar"
+                   href="{% url 'admin:cardapio_diacardapio_changelist' %}">
+                    Listar dias
+                </a>
+
+                <a class="link-adicionar"
+                   href="{% url 'admin:cardapio_diacardapio_add' %}">
+                    Novo dia
+                </a>
+
+            </div>
+
+        </article>
+
+        <article class="modulo-dashboard">
+
+            <div class="icone-modulo">
+                RE
+            </div>
+
+            <div class="conteudo-modulo">
+                <h3>Refeições</h3>
+
+                <p>
+                    Cadastre café da manhã, almoço, jantar e outras
+                    refeições.
+                </p>
+            </div>
+
+            <div class="acoes-modulo">
+
+                <a class="link-gerenciar"
+                   href="{% url 'admin:cardapio_refeicao_changelist' %}">
+                    Listar refeições
+                </a>
+
+                <a class="link-adicionar"
+                   href="{% url 'admin:cardapio_refeicao_add' %}">
+                    Nova refeição
+                </a>
+
+            </div>
+
+        </article>
+
+        <article class="modulo-dashboard">
+
+            <div class="icone-modulo">
+                CT
+            </div>
+
+            <div class="conteudo-modulo">
+                <h3>Categorias</h3>
+
+                <p>
+                    Organize os alimentos por tipo, como prato principal,
+                    acompanhamento e salada.
+                </p>
+            </div>
+
+            <div class="acoes-modulo">
+
+                <a class="link-gerenciar"
+                   href="{% url 'admin:cardapio_categoriaitem_changelist' %}">
+                    Listar categorias
+                </a>
+
+                <a class="link-adicionar"
+                   href="{% url 'admin:cardapio_categoriaitem_add' %}">
+                    Nova categoria
+                </a>
+
+            </div>
+
+        </article>
+
+        <article class="modulo-dashboard">
+
+            <div class="icone-modulo">
+                IT
+            </div>
+
+            <div class="conteudo-modulo">
+                <h3>Itens</h3>
+
+                <p>
+                    Cadastre os alimentos que poderão ser usados na
+                    montagem dos cardápios.
+                </p>
+            </div>
+
+            <div class="acoes-modulo">
+
+                <a class="link-gerenciar"
+                   href="{% url 'admin:cardapio_itemcardapio_changelist' %}">
+                    Listar itens
+                </a>
+
+                <a class="link-adicionar"
+                   href="{% url 'admin:cardapio_itemcardapio_add' %}">
+                    Novo item
+                </a>
+
+            </div>
+
+        </article>
+
+    </div>
+
+    <section class="atividade-recente">
+
+        <div class="titulo-secao">
+
+            <h3>Últimos cardápios cadastrados</h3>
+
+            <p>
+                Veja os cinco registros adicionados mais recentemente.
+            </p>
+
+        </div>
+
+        {% if ultimos_cardapios %}
+
+            <div class="tabela-responsiva">
+
+                <table class="tabela-dashboard">
+
+                    <thead>
+                        <tr>
+                            <th>Dia</th>
+                            <th>Refeição</th>
+                            <th>Categoria</th>
+                            <th>Item</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for cardapio in ultimos_cardapios %}
+
+                            <tr>
+                                <td>
+                                    {{ cardapio.id_dia.nome_dia }}
+                                </td>
+
+                                <td>
+                                    {{ cardapio.id_refeicao.nome_refeicao }}
+                                </td>
+
+                                <td>
+                                    {{ cardapio.id_categoria.nome_categoria }}
+                                </td>
+
+                                <td>
+                                    {{ cardapio.id_item.nome_item }}
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="estado-vazio">
+
+                <h4>Nenhum cardápio cadastrado</h4>
+
+                <p>
+                    Cadastre primeiro uma semana, os dias, as refeições,
+                    as categorias e os itens. Depois monte o cardápio.
+                </p>
+
+                <a class="botao"
+                   href="{% url 'admin:cardapio_cardapio_add' %}">
+                    Cadastrar primeiro cardápio
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,91 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Cardápio UAN{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'cardapio/css/style.css' %}">
+</head>
+
+<body>
+
+    <div class="barra-superior">
+        <div class="container">
+            <span>Instituto Federal de Minas Gerais</span>
+            <span>Campus São João Evangelista</span>
+        </div>
+    </div>
+
+    <header class="cabecalho">
+        <div class="container identidade">
+
+            <div class="marca">
+                UAN
+            </div>
+
+            <div>
+                <h1>Unidade de Alimentação e Nutrição</h1>
+                <p>Sistema de cardápio institucional</p>
+            </div>
+
+        </div>
+    </header>
+
+    <nav class="menu-principal">
+        <div class="container menu">
+
+            <a href="{% url 'escolha_perfil' %}">
+                Início
+            </a>
+
+            <a href="{% url 'usuario_comum' %}">
+                Cardápio da semana
+            </a>
+
+            {% if request.user.is_authenticated %}
+
+                <a href="{% url 'dashboard_nutricionista' %}">
+                    Painel
+                </a>
+
+                <a href="{% url 'sair' %}">
+                    Sair
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'login_nutricionista' %}">
+                    Nutricionista
+                </a>
+
+            {% endif %}
+
+        </div>
+    </nav>
+
+    <main class="conteudo-principal">
+        <div class="container">
+
+            {% block content %}
+            {% endblock %}
+
+        </div>
+    </main>
+
+    <footer class="rodape">
+        <div class="container">
+            <strong>Unidade de Alimentação e Nutrição</strong>
+
+            <p>
+                Instituto Federal de Minas Gerais —
+                Campus São João Evangelista
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
