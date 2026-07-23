@@ -3,6 +3,8 @@ from collections import OrderedDict
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.utils import timezone
+from django.views.decorators.http import require_POST
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -30,13 +32,16 @@ def escolha_perfil(request):
 
 
 def usuario_comum(request):
-    ultimo_registro = (
-        Cardapio.objects.select_related("id_dia__id_semana")
-        .order_by("-id_dia__data_dia", "-id_cardapio")
+    hoje = timezone.localdate()
+
+    semana = (
+        SemanaCardapio.objects.filter(
+            data_inicio__date__lte=hoje,
+            data_fim__date__gte=hoje,
+        )
+        .order_by("data_inicio", "id_semana")
         .first()
     )
-
-    semana = ultimo_registro.id_dia.id_semana if ultimo_registro else None
 
     if semana is None:
         registros = Cardapio.objects.none()
@@ -163,6 +168,7 @@ def dashboard_nutricionista(request):
     )
 
 
+@require_POST
 def sair(request):
     logout(request)
     return redirect("escolha_perfil")

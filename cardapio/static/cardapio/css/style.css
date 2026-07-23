@@ -781,3 +781,20 @@ body {
         padding: 20px;
     }
 }
+.form-logout {
+    display: inline;
+    margin: 0;
+}
+
+.link-menu {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+}
+
+.dashboard-acoes-topo form {
+    margin: 0;
+}
