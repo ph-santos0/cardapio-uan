@@ -31,10 +31,12 @@ Painel do Nutricionista
                 Ver página pública
             </a>
 
-            <a class="botao botao-sair"
-               href="{% url 'sair' %}">
-                Sair
-            </a>
+            <form method="post" action="{% url 'sair' %}">
+                {% csrf_token %}
+                <button class="botao botao-sair" type="submit">
+                    Sair
+                </button>
+            </form>
 
         </div>
 
@@ -43,13 +45,13 @@ Painel do Nutricionista
     <div class="resumo-dashboard">
 
         <article class="cartao-resumo">
-            <span>Cardápios cadastrados</span>
-            <strong>{{ total_cardapios }}</strong>
+            <span>Cardápios Semanais</span>
+            <strong>{{ total_semanas }}</strong>
         </article>
 
         <article class="cartao-resumo">
-            <span>Semanas cadastradas</span>
-            <strong>{{ total_semanas }}</strong>
+            <span>Composições do Cardápio</span>
+            <strong>{{ total_cardapios }}</strong>
         </article>
 
         <article class="cartao-resumo">

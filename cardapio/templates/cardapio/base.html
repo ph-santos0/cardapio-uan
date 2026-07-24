@@ -52,9 +52,12 @@
                     Painel
                 </a>
 
-                <a href="{% url 'sair' %}">
-                    Sair
-                </a>
+                <form method="post" action="{% url 'sair' %}" class="form-logout">
+                    {% csrf_token %}
+                    <button type="submit" class="link-menu">
+                        Sair
+                    </button>
+                </form>
 
             {% else %}
 
