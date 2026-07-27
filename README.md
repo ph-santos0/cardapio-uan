@@ -58,9 +58,40 @@ venv\Scripts\activate
 python3 -m venv venv
 source venv/bin/activate
 ```
+
 *(Você saberá que deu certo quando o nome `(venv)` aparecer no início da linha do seu terminal).*
 
----
+> **⚠️ Caso ocorra o erro de política de execução no Windows:**
+>
+> 
+> File ...\Activate.ps1 cannot be loaded because running scripts is disabled on this system.
+> 
+>
+> Abra o **Windows PowerShell** e execute o seguinte comando no **PowerShell**:
+>
+> ```powershell
+> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+> ```
+>
+> Quando for solicitado, confirme digitando **Y** ou **A** ou **S**.
+>
+> Em seguida, volte ao projeto e ative novamente o ambiente virtual:
+>
+> ```powershell
+> .\venv\Scripts\Activate.ps1
+> ```
+>
+> Se o computador for gerenciado por uma organização e não permitir alterar a política de execução, utilize apenas para a sessão atual:
+>
+> ```powershell
+> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+> ```
+>  Em seguida, volte ao projeto e ative novamente o ambiente virtual:
+>
+> ```powershell
+> .\venv\Scripts\Activate.ps1
+> ```
+> *(Você saberá que deu certo quando o nome `(venv)` aparecer no início da linha do seu terminal).*
 
 ### 3. Instalação das Dependências
 Com o ambiente virtual ativado, instale as bibliotecas necessárias que estão listadas no arquivo `requirements.txt`:
@@ -141,7 +172,7 @@ O sistema permitirá:
 * Cadastro de cardápio diário;
 * Login administrativo;
 * Exibição pública do cardápio;
-* Cadastro de almoço e jantar;
+* Cadastro de refeições;
 * Organização simples e funcional.
 
 ---
