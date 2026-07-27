@@ -38,7 +38,12 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
 
 ## 🚀 Passo a Passo para Configuração Local
 
-### 1. Criação do Ambiente Virtual (venv)
+### 1. Clone o repositório (ou baixe o zip do repositorio)
+```bash
+git clone [https://github.com/ph-santos0/cardapio-uan.git](https://github.com/ph-santos0/cardapio-uan.git)
+cd cardapio-uan
+```
+### 2. Criação do Ambiente Virtual (venv)
 
 Abra o terminal na pasta raiz do projeto (onde está o arquivo `manage.py`) e execute:
 
@@ -57,7 +62,7 @@ source venv/bin/activate
 
 ---
 
-### 2. Instalação das Dependências
+### 3. Instalação das Dependências
 Com o ambiente virtual ativado, instale as bibliotecas necessárias que estão listadas no arquivo `requirements.txt`:
 ```bash
 pip install -r requirements.txt
@@ -65,7 +70,7 @@ pip install -r requirements.txt
 
 ---
 
-### 3. Configuração do Banco de Dados (Migrations)
+### 4. Configuração do Banco de Dados (Migrations)
 Sempre que baixar alterações novas, é necessário garantir que o banco de dados está atualizado com as tabelas do projeto. Execute os comandos de migração:
 ```bash
 python manage.py makemigrations
@@ -74,7 +79,7 @@ python manage.py migrate
 
 ---
 
-### 4. Configurar Usuário Nutricionista (Acesso para Testes)
+### 5. Configurar Usuário Nutricionista (Acesso para Testes)
 Para testar o sistema com as permissões corretas de um profissional de nutrição (criar e editar cardápios), criamos um comando automatizado que gera o grupo e o usuário padrão.
 Basta executar:
 
@@ -87,7 +92,7 @@ python manage.py setup_nutricionistas
 
 ---
 
-### 5. Popular o Banco de Dados
+### 6. Popular o Banco de Dados
 
 Para evitar que a tela inicial fique vazia durante os testes, desenvolvemos um comando que calcula a semana atual dinamicamente e injeta dados no sistema para "Hoje" e "Amanhã".
 Execute:
@@ -99,7 +104,7 @@ python manage.py popular_banco
 
 ---
 
-### 6. Executar o Servidor e Acessar
+### 7. Executar o Servidor e Acessar
 
 Com tudo configurado e o banco populado, inicie o servidor do projeto:
 
@@ -110,8 +115,11 @@ Utilize o login:<br/>
 Usuário: **`nutri`** <br/>
 Senha: **`nutri123`** <br/> <br/>
 **Pronto! O sistema está no ar. Acesse os endereços abaixo:**
-* **Página Pública do Cardápio:** `http://127.0.0.1:8000/`
-* **Painel de Controle:** `http://127.0.0.1:8000/admin/`
+* **Página Inicial (Escolha de Perfil):** `http://127.0.0.1:8000/`
+* **Página Pública do Cardápio:** `http://127.0.0.1:8000/usuario/`
+* **Login do Nutricionista:** `http://127.0.0.1:8000/login/`
+* **Dashboard do Nutricionista:** `http://127.0.0.1:8000/dashboard/`
+* **Painel de Controle (Admin):** `http://127.0.0.1:8000/admin/`
 
 ---
 
