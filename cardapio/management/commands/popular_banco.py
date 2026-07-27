@@ -17,6 +17,7 @@ class Command(BaseCommand):
         self.stdout.write("🍳 Criando Refeições...")
         cafe = Refeicao.objects.create(nome_refeicao="Café da Manhã")
         almoco = Refeicao.objects.create(nome_refeicao="Almoço")
+        jantar = Refeicao.objects.create(nome_refeicao="Jantar")
 
         self.stdout.write("🏷️ Criando Categorias baseadas no padrão...")
         cat_bebida = CategoriaItem.objects.create(nome_categoria="Bebida")
@@ -48,6 +49,16 @@ class Command(BaseCommand):
         i_sobremesa1 = ItemCardapio.objects.create(nome_item="Mexerica Pokan", descricao="Fruta da estação.")
         i_sobremesa2 = ItemCardapio.objects.create(nome_item="Maçã", descricao="Fruta higienizada.")
 
+        # Jantar
+        i_j_entrada1 = ItemCardapio.objects.create(nome_item="Sopa de Ervilha", descricao="Sopa quente e nutritiva.")
+        i_j_entrada2 = ItemCardapio.objects.create(nome_item="Salada de Tomate com Pepino", descricao="Salada leve e refrescante.")
+        i_j_carne1 = ItemCardapio.objects.create(nome_item="Carne de Panela", descricao="Carne bovina cozida com legumes.")
+        i_j_carne2 = ItemCardapio.objects.create(nome_item="Filé de Frango Grelhado", descricao="Filé temperado com limão.")
+        i_j_veg1 = ItemCardapio.objects.create(nome_item="Torta de Legumes", descricao="Torta salgada sem carne.")
+        i_j_veg2 = ItemCardapio.objects.create(nome_item="Omelete de Queijo", descricao="Omelete de forno.")
+        i_j_guar1 = ItemCardapio.objects.create(nome_item="Purê de Batata", descricao="Purê cremoso feito com manteiga.")
+        i_j_guar2 = ItemCardapio.objects.create(nome_item="Mandioca Cozida", descricao="Mandioca derretendo na manteiga.")
+
         self.stdout.write("📅 Gerando 14 dias (2 semanas completas)...")
         hoje = timezone.localtime(timezone.now()).date()
         dias_para_domingo = (hoje.weekday() + 1) % 7
@@ -77,6 +88,21 @@ class Command(BaseCommand):
             Cardapio.objects.create(id_dia=dia_obj, id_refeicao=almoco, id_categoria=cat_prato_base, id_item=i_arroz)
             Cardapio.objects.create(id_dia=dia_obj, id_refeicao=almoco, id_categoria=cat_prato_base, id_item=i_feijao)
             Cardapio.objects.create(id_dia=dia_obj, id_refeicao=almoco, id_categoria=cat_sobremesa, id_item=sob_dia)
+
+            # --- JANTAR ---
+            j_entrada_dia = i_j_entrada1 if i % 2 == 0 else i_j_entrada2
+            j_carne_dia = i_j_carne1 if i % 2 == 0 else i_j_carne2
+            j_veg_dia = i_j_veg1 if i % 2 == 0 else i_j_veg2
+            j_guar_dia = i_j_guar1 if i % 2 == 0 else i_j_guar2
+
+            Cardapio.objects.create(id_dia=dia_obj, id_refeicao=jantar, id_categoria=cat_entrada, id_item=j_entrada_dia)
+            Cardapio.objects.create(id_dia=dia_obj, id_refeicao=jantar, id_categoria=cat_prato_principal, id_item=j_carne_dia)
+            Cardapio.objects.create(id_dia=dia_obj, id_refeicao=jantar, id_categoria=cat_vegetariana, id_item=j_veg_dia)
+            Cardapio.objects.create(id_dia=dia_obj, id_refeicao=jantar, id_categoria=cat_guarnicao, id_item=j_guar_dia)
+            # Reaproveitando arroz, feijão e sobremesa do almoço para o jantar
+            Cardapio.objects.create(id_dia=dia_obj, id_refeicao=jantar, id_categoria=cat_prato_base, id_item=i_arroz)
+            Cardapio.objects.create(id_dia=dia_obj, id_refeicao=jantar, id_categoria=cat_prato_base, id_item=i_feijao)
+            Cardapio.objects.create(id_dia=dia_obj, id_refeicao=jantar, id_categoria=cat_sobremesa, id_item=sob_dia)
 
         data_fim = data_inicio + datetime.timedelta(days=13)
         self.stdout.write(self.style.SUCCESS(
