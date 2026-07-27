@@ -22,7 +22,8 @@ Cardápio da Semana
 
     </div>
 
-    {% if semana %}
+    <!-- Verifica as datas de início e fim que enviamos da view -->
+    {% if data_inicio and data_fim %}
 
         <div class="periodo-cardapio">
 
@@ -30,9 +31,9 @@ Cardápio da Semana
                 <strong>Período do cardápio</strong>
 
                 <span>
-                    {{ semana.data_inicio|date:"d/m/Y" }}
+                    {{ data_inicio|date:"d/m/Y" }}
                     a
-                    {{ semana.data_fim|date:"d/m/Y" }}
+                    {{ data_fim|date:"d/m/Y" }}
                 </span>
             </div>
 
@@ -44,57 +45,64 @@ Cardápio da Semana
 
     {% endif %}
 
-    {% if dias %}
+    <!-- Verifica se existem cardápios cadastrados para essa semana -->
+    {% if cardapios %}
 
         <div class="dias-cardapio">
 
-            {% for dia in dias %}
+            <!-- Agrupa a lista de cardápios por dia e ordena por data -->
+            {% regroup cardapios|dictsort:"id_dia.data_dia" by id_dia as dias_list %}
+
+            {% for dia_group in dias_list %}
 
                 <article class="dia-cardapio">
 
                     <header class="cabecalho-dia">
 
                         <h3>
-                            {{ dia.nome }}
+                            {{ dia_group.grouper.nome_dia }}
                         </h3>
 
                         <span>
-                            {{ dia.data|date:"d/m" }}
+                            {{ dia_group.grouper.data_dia|date:"d/m" }}
                         </span>
 
                     </header>
 
                     <div class="refeicoes-dia">
 
-                        {% for refeicao in dia.refeicoes %}
+                        <!-- Agrupa os itens do dia por refeição -->
+                        {% regroup dia_group.list|dictsort:"id_refeicao.id_refeicao" by id_refeicao as refeicoes_list %}
+
+                        {% for ref_group in refeicoes_list %}
 
                             <section class="refeicao">
 
                                 <h4>
-                                    {{ refeicao.nome }}
+                                    {{ ref_group.grouper.nome_refeicao }}
                                 </h4>
 
-                                {% if refeicao.itens %}
+                                {% if ref_group.list %}
 
                                     <ul>
 
-                                        {% for item in refeicao.itens %}
+                                        {% for cardapio in ref_group.list %}
 
                                             <li>
 
                                                 <strong>
-                                                    {{ item.nome }}
+                                                    {{ cardapio.id_item.nome_item }}
                                                 </strong>
 
-                                                {% if item.categoria %}
+                                                {% if cardapio.id_categoria %}
                                                     <span class="categoria-item">
-                                                        {{ item.categoria }}
+                                                        {{ cardapio.id_categoria.nome_categoria }}
                                                     </span>
                                                 {% endif %}
 
-                                                {% if item.descricao %}
+                                                {% if cardapio.id_item.descricao %}
                                                     <p>
-                                                        {{ item.descricao }}
+                                                        {{ cardapio.id_item.descricao }}
                                                     </p>
                                                 {% endif %}
 
@@ -131,7 +139,7 @@ Cardápio da Semana
             <h3>Nenhum cardápio cadastrado</h3>
 
             <p>
-                Ainda não existem refeições cadastradas no banco de dados.
+                Ainda não existem refeições cadastradas no banco de dados para a semana atual.
             </p>
 
         </div>

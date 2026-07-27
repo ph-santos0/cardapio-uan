@@ -1,0 +1,61 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .botoes-flutuantes-admin {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        z-index: 10000;
+    }
+    .btn-flutuante {
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: #fff !important;
+        font-size: 14px;
+        font-weight: bold;
+        text-decoration: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-flutuante:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    }
+    .btn-adicionar-cardapio {
+        background-color: #28a745;
+    }
+    .btn-voltar-sistema {
+        background-color: #17a2b8;
+    }
+</style>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+
+{% if not is_popup %}
+<div class="botoes-flutuantes-admin">
+    
+    {% if 'cardapio/diacardapio' not in request.path %}
+    <a href="{% url 'admin:cardapio_diacardapio_add' %}" class="btn-flutuante btn-adicionar-cardapio">
+        ➕ Novo Cardápio Diário
+    </a>
+    {% endif %}
+
+    <a href="{% url 'dashboard_nutricionista' %}" class="btn-flutuante btn-voltar-sistema">
+        🏠 Voltar ao Sistema
+    </a>
+    
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,5 +1,4 @@
-from collections import OrderedDict
-
+import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
@@ -15,15 +14,14 @@ from .models import (
     DiaCardapio,
     ItemCardapio,
     Refeicao,
-    SemanaCardapio,
 )
+
 from .serializers import (
     CardapioSerializer,
     CategoriaItemSerializer,
     DiaCardapioSerializer,
     ItemCardapioSerializer,
     RefeicaoSerializer,
-    SemanaCardapioSerializer,
 )
 
 
@@ -32,78 +30,39 @@ def escolha_perfil(request):
 
 
 def usuario_comum(request):
-    hoje = timezone.localdate()
+    # 1. Pega a data atual no fuso horário correto
+    hoje = timezone.localtime(timezone.now()).date()
 
-    semana = (
-        SemanaCardapio.objects.filter(
-            data_inicio__date__lte=hoje,
-            data_fim__date__gte=hoje,
+    # 2. Encontra as datas da semana atual (Domingo a Sábado)
+    dias_para_domingo = (hoje.weekday() + 1) % 7
+    data_inicio = hoje - datetime.timedelta(days=dias_para_domingo)
+    data_fim = data_inicio + datetime.timedelta(days=6)
+
+    # 3. Busca os cardápios vinculados aos dias dessa exata semana
+    cardapios = (
+        Cardapio.objects.select_related(
+            "id_dia",
+            "id_refeicao",
+            "id_categoria",
+            "id_item",
         )
-        .order_by("data_inicio", "id_semana")
-        .first()
+        .filter(id_dia__data_dia__range=[data_inicio, data_fim])
+        .order_by(
+            "id_dia__data_dia",
+            "id_refeicao__id_refeicao",
+            "id_categoria__id_categoria",
+            "id_item__nome_item",
+        )
     )
 
-    if semana is None:
-        registros = Cardapio.objects.none()
-    else:
-        registros = (
-            Cardapio.objects.select_related(
-                "id_dia",
-                "id_dia__id_semana",
-                "id_refeicao",
-                "id_categoria",
-                "id_item",
-            )
-            .filter(id_dia__id_semana=semana)
-            .order_by(
-                "id_dia__data_dia",
-                "id_refeicao__id_refeicao",
-                "id_categoria__id_categoria",
-                "id_item__nome_item",
-            )
-        )
-
-    dias_organizados = OrderedDict()
-
-    for registro in registros:
-        dia = registro.id_dia
-        refeicao = registro.id_refeicao
-
-        if dia.id_dia not in dias_organizados:
-            dias_organizados[dia.id_dia] = {
-                "nome": dia.nome_dia,
-                "data": dia.data_dia,
-                "refeicoes": OrderedDict(),
-            }
-
-        refeicoes_do_dia = dias_organizados[dia.id_dia]["refeicoes"]
-
-        if refeicao.id_refeicao not in refeicoes_do_dia:
-            refeicoes_do_dia[refeicao.id_refeicao] = {
-                "nome": refeicao.nome_refeicao,
-                "itens": [],
-            }
-
-        refeicoes_do_dia[refeicao.id_refeicao]["itens"].append(
-            {
-                "nome": registro.id_item.nome_item,
-                "descricao": registro.id_item.descricao,
-                "categoria": registro.id_categoria.nome_categoria,
-            }
-        )
-
-    dias = []
-
-    for dia in dias_organizados.values():
-        dia["refeicoes"] = list(dia["refeicoes"].values())
-        dias.append(dia)
-
+    # O agrupamento agora é feito direto pelo HTML usando o {% regroup %}
     return render(
         request,
         "cardapio/usuario_comum.html",
         {
-            "dias": dias,
-            "semana": semana,
+            "data_inicio": data_inicio,
+            "data_fim": data_fim,
+            "cardapios": cardapios,
         },
     )
 
@@ -157,7 +116,6 @@ def dashboard_nutricionista(request):
         request,
         "cardapio/dashboard_nutricionista.html",
         {
-            "total_semanas": SemanaCardapio.objects.count(),
             "total_dias": DiaCardapio.objects.count(),
             "total_refeicoes": Refeicao.objects.count(),
             "total_categorias": CategoriaItem.objects.count(),
@@ -283,18 +241,6 @@ def dias_cardapio(request, pk=None):
         serializer_class=DiaCardapioSerializer,
         id_field="id_dia",
         nome_entidade="Dia do cardápio",
-        pk=pk,
-    )
-
-
-@api_view(["GET", "POST", "PUT", "DELETE"])
-def semanas_cardapio(request, pk=None):
-    return _crud_api(
-        request,
-        model=SemanaCardapio,
-        serializer_class=SemanaCardapioSerializer,
-        id_field="id_semana",
-        nome_entidade="Semana do cardápio",
         pk=pk,
     )
 

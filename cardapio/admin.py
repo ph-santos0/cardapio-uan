@@ -1,7 +1,5 @@
 from django.contrib import admin
-
 from .models import (
-    SemanaCardapio,
     DiaCardapio,
     Refeicao,
     CategoriaItem,
@@ -9,18 +7,20 @@ from .models import (
     Cardapio,
 )
 
-
-@admin.register(SemanaCardapio)
-class SemanaCardapioAdmin(admin.ModelAdmin):
-    list_display = ("id_semana", "data_inicio", "data_fim")
-    ordering = ("-data_inicio",)
-
-
+class CardapioInline(admin.TabularInline):
+    model = Cardapio
+    extra = 5  
 @admin.register(DiaCardapio)
 class DiaCardapioAdmin(admin.ModelAdmin):
-    list_display = ("id_dia", "nome_dia", "data_dia", "id_semana")
-    list_filter = ("id_semana",)
-    search_fields = ("nome_dia",)
+    list_display = ("id_dia", "data_dia", "nome_dia_dinamico")
+    ordering = ("-data_dia",)
+    date_hierarchy = "data_dia"
+    
+    inlines = [CardapioInline] 
+
+    def nome_dia_dinamico(self, obj):
+        return obj.nome_dia()
+    nome_dia_dinamico.short_description = "Dia da Semana"
 
 
 @admin.register(Refeicao)
@@ -59,6 +59,8 @@ class CardapioAdmin(admin.ModelAdmin):
 
     search_fields = (
         "id_item__nome_item",
-        "id_dia__nome_dia",
         "id_refeicao__nome_refeicao",
     )
+    
+    def has_module_permission(self, request):
+        return False
