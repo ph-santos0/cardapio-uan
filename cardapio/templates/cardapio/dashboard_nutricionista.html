@@ -41,28 +41,18 @@ Painel do Nutricionista
 
     </div>
 
-    <div class="resumo-dashboard">
-
-        <article class="cartao-resumo">
-            <span>Cardápios diários</span>
-            <strong>{{ total_dias }}</strong>
-        </article>
-
-    </div>
-
     <!-- ================= SEÇÃO PRINCIPAL ================= -->
     <div class="titulo-secao">
 
         <h3>Cadastro Principal</h3>
 
-
     </div>
 
     <div class="modulos-dashboard">
 
-        <article class="modulo-dashboard">
+        <article class="modulo-dashboard" style="flex-grow: 2; border-left: 4px solid #28a745;">
 
-            <div class="icone-modulo">
+            <div class="icone-modulo" style="background-color: #28a745; color: white;">
                 DI
             </div>
 
@@ -81,12 +71,19 @@ Painel do Nutricionista
                     Listar dias
                 </a>
 
-                <a class="link-adicionar" href="{% url 'admin:cardapio_diacardapio_add' %}">
+                <a class="link-adicionar" href="{% url 'admin:cardapio_diacardapio_add' %}"
+                    style="background-color: #28a745; color: white; border-color: #28a745;">
                     Novo cardápio diário
                 </a>
 
             </div>
 
+        </article>
+
+        <article class="cartao-resumo"
+            style="justify-content: center; align-items: center; text-align: center; min-width: 200px;">
+            <span>Cardápios diários cadastrados</span>
+            <strong>{{ total_dias }}</strong>
         </article>
 
     </div>
