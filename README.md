@@ -32,7 +32,7 @@ Este documento fornece as instruções completas para configurar o ambiente de d
 ## 📋 Pré-requisitos
 Antes de começar, certifique-se de ter instalado em sua máquina:
 * **Python** (versão 3.8 ou superior)
-* **Git** (para versionamento)
+* **Git** (caso queira utilizar para git clone e versionamento)
 
 ---
 
