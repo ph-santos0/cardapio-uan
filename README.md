@@ -38,7 +38,7 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
 
 ## 🚀 Passo a Passo para Configuração Local
 
-### 1. Clone o repositório (ou baixe o zip do repositorio)
+### 1. Clone o repositório (ou baixe o zip do repositorio manualmente)
 ```bash
 git clone [https://github.com/ph-santos0/cardapio-uan.git](https://github.com/ph-santos0/cardapio-uan.git)
 cd cardapio-uan
