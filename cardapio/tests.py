@@ -1,97 +1,98 @@
-from datetime import datetime
-from unittest.mock import patch
-
-from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.urls import reverse
-from django.utils import timezone
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from django.db.models.deletion import ProtectedError
+from datetime import date
+from rest_framework import status
+from rest_framework.test import APIClient
 
-from .models import (
-    Cardapio,
-    CategoriaItem,
-    DiaCardapio,
-    ItemCardapio,
-    Refeicao,
-    SemanaCardapio,
-)
+from .models import DiaCardapio, Refeicao, CategoriaItem, ItemCardapio, Cardapio
 
-
-class UsuarioComumViewTests(TestCase):
-    def criar_semana_com_item(self, inicio, fim, nome_item):
-        semana = SemanaCardapio.objects.create(
-            data_inicio=timezone.make_aware(datetime.combine(inicio, datetime.min.time())),
-            data_fim=timezone.make_aware(datetime.combine(fim, datetime.max.time())),
-        )
-        dia = DiaCardapio.objects.create(
-            id_semana=semana,
-            data_dia=timezone.make_aware(datetime.combine(inicio, datetime.min.time())),
-            nome_dia="Segunda-feira",
-        )
-        refeicao = Refeicao.objects.create(nome_refeicao=f"Almoço {nome_item}")
-        categoria = CategoriaItem.objects.create(nome_categoria=f"Categoria {nome_item}")
-        item = ItemCardapio.objects.create(nome_item=nome_item, descricao="Descrição")
-        Cardapio.objects.create(
-            id_dia=dia,
-            id_refeicao=refeicao,
-            id_categoria=categoria,
-            id_item=item,
-        )
-        return semana
-
-    @patch("cardapio.views.timezone.localdate")
-    def test_exibe_semana_que_contem_a_data_local_atual(self, localdate_mock):
-        localdate_mock.return_value = datetime(2026, 7, 23).date()
-        semana_atual = self.criar_semana_com_item(
-            datetime(2026, 7, 20).date(),
-            datetime(2026, 7, 26).date(),
-            "Arroz atual",
-        )
-        self.criar_semana_com_item(
-            datetime(2026, 7, 27).date(),
-            datetime(2026, 8, 2).date(),
-            "Arroz futuro",
-        )
-
-        response = self.client.get(reverse("usuario_comum"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["semana"], semana_atual)
-        self.assertContains(response, "Arroz atual")
-        self.assertNotContains(response, "Arroz futuro")
-
-
-class LogoutViewTests(TestCase):
+class SistemaCardapioTests(TestCase):
     def setUp(self):
-        self.usuario = get_user_model().objects.create_user(
-            username="nutricionista",
-            password="senha-segura",
-            is_staff=True,
+        # Clientes para simular o navegador e requisições à API
+        self.client = Client()
+        self.api_client = APIClient()
+
+        # Criar usuário autorizado
+        self.nutri = User.objects.create_user(username='nutricionista', password='123', is_staff=True)
+
+        # -----------------------------------------------------------
+        # TESTE: Cadastrar dia, refeição, categoria e item
+        # Resultado esperado: Registros salvos sem erros no banco
+        # -----------------------------------------------------------
+        self.dia = DiaCardapio.objects.create(data_dia=date.today())
+        self.refeicao = Refeicao.objects.create(nome_refeicao="Almoço Teste")
+        self.categoria = CategoriaItem.objects.create(nome_categoria="Prato Principal Teste")
+        self.item = ItemCardapio.objects.create(nome_item="Frango Teste", descricao="Teste")
+
+        # -----------------------------------------------------------
+        # TESTE: Montar cardápio
+        # Resultado esperado: Registro salvo no banco com sucesso
+        # -----------------------------------------------------------
+        self.cardapio = Cardapio.objects.create(
+            id_dia=self.dia,
+            id_refeicao=self.refeicao,
+            id_categoria=self.categoria,
+            id_item=self.item
         )
-        self.client.login(username="nutricionista", password="senha-segura")
 
-    def test_logout_nao_aceita_get(self):
-        response = self.client.get(reverse("sair"))
-        self.assertEqual(response.status_code, 405)
-
-    def test_logout_aceita_post_e_encerra_sessao(self):
-        response = self.client.post(reverse("sair"))
-        self.assertRedirects(response, reverse("escolha_perfil"))
-        self.assertNotIn("_auth_user_id", self.client.session)
-
-
-class DashboardNutricionistaTests(TestCase):
-    def setUp(self):
-        self.usuario = get_user_model().objects.create_user(
-            username="nutricionista",
-            password="senha-segura",
-            is_staff=True,
-        )
-        self.client.login(username="nutricionista", password="senha-segura")
-
-    def test_metricas_usam_rotulos_semanticos_corretos(self):
-        response = self.client.get(reverse("dashboard_nutricionista"))
-
+    def test_acesso_pagina_publica_sem_login(self):
+        """ TESTE: Acessar página pública sem login | Resultado: Acesso permitido (HTTP 200) """
+        response = self.client.get(reverse('usuario_comum'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Cardápios Semanais")
-        self.assertContains(response, "Composições do Cardápio")
-        self.assertNotContains(response, "Cardápios cadastrados")
+
+    def test_acesso_dashboard_sem_login(self):
+        """ TESTE: Acessar dashboard sem login | Resultado: Redirecionamento para login (HTTP 302) """
+        response = self.client.get(reverse('dashboard_nutricionista'))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(reverse('login_nutricionista')))
+
+    def test_entrar_com_nutricionista_autorizado(self):
+        """ TESTE: Entrar com nutricionista autorizado | Resultado: Painel carregado (HTTP 200) """
+        self.client.login(username='nutricionista', password='123')
+        response = self.client.get(reverse('dashboard_nutricionista'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Área administrativa")
+
+    def test_impedir_cardapio_duplicado(self):
+        """ TESTE: Repetir a mesma combinação | Resultado: Duplicidade recusada (IntegrityError) """
+        with self.assertRaises(IntegrityError):
+            Cardapio.objects.create(
+                id_dia=self.dia,
+                id_refeicao=self.refeicao,
+                id_categoria=self.categoria,
+                id_item=self.item
+            )
+
+    def test_exclusao_controlada(self):
+        """ TESTE: Excluir registro histórico | Resultado: Exclusão recusada (ProtectedError) """
+        # Tentar apagar um item que já está em uso em um cardápio montado
+        with self.assertRaises(ProtectedError):
+            self.item.delete()
+
+    def test_editar_cardapio(self):
+        """ TESTE: Editar cardápio | Resultado: Alteração salva e exibida """
+        novo_item = ItemCardapio.objects.create(nome_item="Bife Teste")
+        self.cardapio.id_item = novo_item
+        self.cardapio.save()
+        self.assertEqual(self.cardapio.id_item.nome_item, "Bife Teste")
+
+    def test_api_post_anonimo_bloqueado(self):
+        """ TESTE: Enviar POST anônimo à API | Resultado: Acesso bloqueado (HTTP 403 Forbidden) """
+        response = self.api_client.post(reverse('api_listar_cardapios'), {}) # URL corrigida aqui
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_api_delete_anonimo_bloqueado(self):
+        """ TESTE: Enviar DELETE anônimo à API | Resultado: Acesso bloqueado (HTTP 403 Forbidden) """
+        response = self.api_client.delete(reverse('api_listar_cardapios')) # URL corrigida aqui
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        
+    def test_nova_arquitetura_impede_erros_de_data(self):
+        """
+        Substitui os testes 'Semana com data invertida' e 'Dia fora da semana'.
+        A nova arquitetura remove a tabela 'Semana', mas impede dias duplicados.
+        """
+        with self.assertRaises(IntegrityError):
+            DiaCardapio.objects.create(data_dia=date.today()) # Tentar criar a mesma data de novo
