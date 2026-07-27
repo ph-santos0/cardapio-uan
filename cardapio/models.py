@@ -1,72 +1,78 @@
 from django.db import models
-
-class DiaCardapio(models.Model):
-    id_dia = models.AutoField(primary_key=True)
-    data_dia = models.DateField(unique=True, verbose_name="Data do Dia")
-
-    class Meta:
-            db_table = 'dia_cardapio'
-            ordering = ['-data_dia']
-            verbose_name = 'Dia'
-            verbose_name_plural = '1. Cardápio Diário'
-
-    def nome_dia(self):
-        # Calcula o nome do dia dinamicamente com base na data
-        nomes = {
-            0: 'Segunda-Feira', 1: 'Terça-Feira', 2: 'Quarta-Feira',
-            3: 'Quinta-Feira', 4: 'Sexta-Feira', 5: 'Sábado', 6: 'Domingo'
-        }
-        return nomes[self.data_dia.weekday()]
-
-    def __str__(self):
-        return f"{self.nome_dia()} ({self.data_dia.strftime('%d/%m/%Y')})"
+from django.core.exceptions import ValidationError
 
 class Refeicao(models.Model):
-    id_refeicao = models.AutoField(primary_key=True)
-    nome_refeicao = models.CharField(max_length=50)
+    # unique=True impede que cadastrem duas refeições com o mesmo nome
+    nome_refeicao = models.CharField(max_length=50, unique=True) 
 
     class Meta:
-            db_table = 'refeicao'
-            verbose_name = 'Refeição'
-            verbose_name_plural = '2. Refeições'
+        db_table = 'refeicao'
+        verbose_name = 'Refeição'
+        verbose_name_plural = '2. Refeições'
 
     def __str__(self):
         return self.nome_refeicao
 
 class CategoriaItem(models.Model):
-    id_categoria = models.AutoField(primary_key=True)
-    nome_categoria = models.CharField(max_length=50)
+    # unique=True impede duplicidade de categorias
+    nome_categoria = models.CharField(max_length=50, unique=True) 
 
     class Meta:
-            db_table = 'categoria_item'
-            verbose_name = 'Categoria'
-            verbose_name_plural = '3. Categorias'
+        db_table = 'categoria_item'
+        verbose_name = 'Categoria'
+        verbose_name_plural = '3. Categorias'
 
     def __str__(self):
         return self.nome_categoria
 
 class ItemCardapio(models.Model):
-    id_item = models.AutoField(primary_key=True)
-    nome_item = models.CharField(max_length=50)
+    # unique=True impede que cadastrem o mesmo alimento duas vezes
+    nome_item = models.CharField(max_length=100, unique=True)
     descricao = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-            db_table = 'item_cardapio'
-            verbose_name = 'Item do Cardápio'
-            verbose_name_plural = '4. Itens do Cardápio'
+        db_table = 'item_cardapio'
+        verbose_name = 'Item do Cardápio'
+        verbose_name_plural = '4. Itens do Cardápio'
 
     def __str__(self):
         return self.nome_item
 
+class DiaCardapio(models.Model):
+    # unique=True substitui a necessidade de validar conflitos de dias da antiga tabela de semanas
+    data_dia = models.DateField(unique=True) 
+
+    class Meta:
+        db_table = 'dia_cardapio'
+        ordering = ['-data_dia']
+        verbose_name = 'Dia'
+        verbose_name_plural = '1. Dias (Cardápio Diário)'
+
+    def nome_dia(self):
+        dias = ['Segunda-Feira', 'Terça-Feira', 'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira', 'Sábado', 'Domingo']
+        return dias[self.data_dia.weekday()]
+
+    def __str__(self):
+        return f"{self.nome_dia()} - {self.data_dia.strftime('%d/%m/%Y')}"
+
 class Cardapio(models.Model):
-    id_cardapio = models.AutoField(primary_key=True)
-    id_dia = models.ForeignKey(DiaCardapio, on_delete=models.CASCADE, db_column='id_dia', related_name='cardapios')
-    id_refeicao = models.ForeignKey(Refeicao, on_delete=models.CASCADE, db_column='id_refeicao')
-    id_categoria = models.ForeignKey(CategoriaItem, on_delete=models.CASCADE, db_column='id_categoria')
-    id_item = models.ForeignKey(ItemCardapio, on_delete=models.CASCADE, db_column='id_item')
+    # O Dia continua CASCADE, pois se o dia for deletado, o cardápio dele deve sumir.
+    id_dia = models.ForeignKey(DiaCardapio, on_delete=models.CASCADE)
+    
+    # PROTECT evita exclusão acidental de histórico!
+    id_refeicao = models.ForeignKey(Refeicao, on_delete=models.PROTECT)
+    id_categoria = models.ForeignKey(CategoriaItem, on_delete=models.PROTECT)
+    id_item = models.ForeignKey(ItemCardapio, on_delete=models.PROTECT)
 
     class Meta:
         db_table = 'cardapio'
-        
+        # Esta regra impede que a mesma comida seja lançada duas vezes na mesma categoria, refeição e dia!
+        constraints = [
+            models.UniqueConstraint(
+                fields=['id_dia', 'id_refeicao', 'id_categoria', 'id_item'], 
+                name='unique_cardapio_completo'
+            )
+        ]
+
     def __str__(self):
-        return f"Cardápio - {self.id_dia} - {self.id_refeicao}"
+        return f"{self.id_dia} | {self.id_refeicao} | {self.id_categoria} | {self.id_item}"

@@ -5,7 +5,8 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes  # Modificado aqui
+from rest_framework.permissions import IsAdminUser  # Modificado aqui
 from rest_framework.response import Response
 
 from .models import (
@@ -214,6 +215,7 @@ def _crud_api(
 
 
 @api_view(["GET", "POST", "PUT", "DELETE"])
+@permission_classes([IsAdminUser])  
 def listar_cardapios(request, pk=None):
     queryset = Cardapio.objects.select_related(
         "id_dia",
@@ -234,6 +236,7 @@ def listar_cardapios(request, pk=None):
 
 
 @api_view(["GET", "POST", "PUT", "DELETE"])
+@permission_classes([IsAdminUser])  
 def dias_cardapio(request, pk=None):
     return _crud_api(
         request,
@@ -246,6 +249,7 @@ def dias_cardapio(request, pk=None):
 
 
 @api_view(["GET", "POST", "PUT", "DELETE"])
+@permission_classes([IsAdminUser])  
 def refeicoes(request, pk=None):
     return _crud_api(
         request,
@@ -258,6 +262,7 @@ def refeicoes(request, pk=None):
 
 
 @api_view(["GET", "POST", "PUT", "DELETE"])
+@permission_classes([IsAdminUser])  
 def categorias_item(request, pk=None):
     return _crud_api(
         request,
@@ -270,6 +275,7 @@ def categorias_item(request, pk=None):
 
 
 @api_view(["GET", "POST", "PUT", "DELETE"])
+@permission_classes([IsAdminUser])  
 def itens_cardapio(request, pk=None):
     return _crud_api(
         request,
