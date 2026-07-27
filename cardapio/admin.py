@@ -10,9 +10,10 @@ from .models import (
 class CardapioInline(admin.TabularInline):
     model = Cardapio
     extra = 5  
+
 @admin.register(DiaCardapio)
 class DiaCardapioAdmin(admin.ModelAdmin):
-    list_display = ("id_dia", "data_dia", "nome_dia_dinamico")
+    list_display = ("id", "data_dia", "nome_dia_dinamico") # Corrigido id_dia para id
     ordering = ("-data_dia",)
     date_hierarchy = "data_dia"
     
@@ -25,26 +26,26 @@ class DiaCardapioAdmin(admin.ModelAdmin):
 
 @admin.register(Refeicao)
 class RefeicaoAdmin(admin.ModelAdmin):
-    list_display = ("id_refeicao", "nome_refeicao")
+    list_display = ("id", "nome_refeicao") # Corrigido id_refeicao para id
     search_fields = ("nome_refeicao",)
 
 
 @admin.register(CategoriaItem)
 class CategoriaItemAdmin(admin.ModelAdmin):
-    list_display = ("id_categoria", "nome_categoria")
+    list_display = ("id", "nome_categoria") # Corrigido id_categoria para id
     search_fields = ("nome_categoria",)
 
 
 @admin.register(ItemCardapio)
 class ItemCardapioAdmin(admin.ModelAdmin):
-    list_display = ("id_item", "nome_item", "descricao")
+    list_display = ("id", "nome_item", "descricao") # Corrigido id_item para id
     search_fields = ("nome_item", "descricao")
 
 
 @admin.register(Cardapio)
 class CardapioAdmin(admin.ModelAdmin):
     list_display = (
-        "id_cardapio",
+        "id", # Corrigido id_cardapio para id
         "id_dia",
         "id_refeicao",
         "id_categoria",

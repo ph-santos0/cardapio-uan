@@ -50,8 +50,8 @@ Cardápio da Semana
 
         <div class="dias-cardapio">
 
-            <!-- Agrupa a lista de cardápios por dia e ordena por data -->
-            {% regroup cardapios|dictsort:"id_dia.data_dia" by id_dia as dias_list %}
+            <!-- Agrupa a lista de cardápios por dia. A View já ordenou tudo pra nós! -->
+            {% regroup cardapios by id_dia as dias_list %}
 
             {% for dia_group in dias_list %}
 
@@ -71,8 +71,8 @@ Cardápio da Semana
 
                     <div class="refeicoes-dia">
 
-                        <!-- Agrupa os itens do dia por refeição -->
-                        {% regroup dia_group.list|dictsort:"id_refeicao.id_refeicao" by id_refeicao as refeicoes_list %}
+                        <!-- Agrupa os itens do dia por refeição. Sem o dictsort antigo! -->
+                        {% regroup dia_group.list by id_refeicao as refeicoes_list %}
 
                         {% for ref_group in refeicoes_list %}
 

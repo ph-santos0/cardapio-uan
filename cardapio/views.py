@@ -5,8 +5,8 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes  # Modificado aqui
-from rest_framework.permissions import IsAdminUser  # Modificado aqui
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from .models import (
@@ -50,8 +50,8 @@ def usuario_comum(request):
         .filter(id_dia__data_dia__range=[data_inicio, data_fim])
         .order_by(
             "id_dia__data_dia",
-            "id_refeicao__id_refeicao",
-            "id_categoria__id_categoria",
+            "id_refeicao__id",   # Corrigido aqui
+            "id_categoria__id",  # Corrigido aqui
             "id_item__nome_item",
         )
     )
@@ -110,7 +110,7 @@ def dashboard_nutricionista(request):
             "id_categoria",
             "id_item",
         )
-        .order_by("-id_cardapio")[:5]
+        .order_by("-id")[:5]  # Corrigido de -id_cardapio para -id
     )
 
     return render(
@@ -215,7 +215,7 @@ def _crud_api(
 
 
 @api_view(["GET", "POST", "PUT", "DELETE"])
-@permission_classes([IsAdminUser])  
+@permission_classes([IsAdminUser])
 def listar_cardapios(request, pk=None):
     queryset = Cardapio.objects.select_related(
         "id_dia",
@@ -228,7 +228,7 @@ def listar_cardapios(request, pk=None):
         request,
         model=Cardapio,
         serializer_class=CardapioSerializer,
-        id_field="id_cardapio",
+        id_field="id",  # Corrigido aqui
         nome_entidade="Cardápio",
         pk=pk,
         queryset=queryset,
@@ -236,52 +236,52 @@ def listar_cardapios(request, pk=None):
 
 
 @api_view(["GET", "POST", "PUT", "DELETE"])
-@permission_classes([IsAdminUser])  
+@permission_classes([IsAdminUser])
 def dias_cardapio(request, pk=None):
     return _crud_api(
         request,
         model=DiaCardapio,
         serializer_class=DiaCardapioSerializer,
-        id_field="id_dia",
+        id_field="id",  # Corrigido aqui
         nome_entidade="Dia do cardápio",
         pk=pk,
     )
 
 
 @api_view(["GET", "POST", "PUT", "DELETE"])
-@permission_classes([IsAdminUser])  
+@permission_classes([IsAdminUser])
 def refeicoes(request, pk=None):
     return _crud_api(
         request,
         model=Refeicao,
         serializer_class=RefeicaoSerializer,
-        id_field="id_refeicao",
+        id_field="id",  # Corrigido aqui
         nome_entidade="Refeição",
         pk=pk,
     )
 
 
 @api_view(["GET", "POST", "PUT", "DELETE"])
-@permission_classes([IsAdminUser])  
+@permission_classes([IsAdminUser])
 def categorias_item(request, pk=None):
     return _crud_api(
         request,
         model=CategoriaItem,
         serializer_class=CategoriaItemSerializer,
-        id_field="id_categoria",
+        id_field="id",  # Corrigido aqui
         nome_entidade="Categoria",
         pk=pk,
     )
 
 
 @api_view(["GET", "POST", "PUT", "DELETE"])
-@permission_classes([IsAdminUser])  
+@permission_classes([IsAdminUser])
 def itens_cardapio(request, pk=None):
     return _crud_api(
         request,
         model=ItemCardapio,
         serializer_class=ItemCardapioSerializer,
-        id_field="id_item",
+        id_field="id",  # Corrigido aqui
         nome_entidade="Item do cardápio",
         pk=pk,
     )
